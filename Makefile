@@ -4,6 +4,8 @@ IMAGE_TAG?=latest
 IMAGE?=$(REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG)
 DOCKERFILE?=Dockerfile.daemon
 CONNTRACK_PATH?=/proc/net/nf_conntrack
+PLATFORMS?=linux/amd64,linux/arm64
+BUILDER_NAME?=kflow-builder
 
 .PHONY: build docker-build docker-push k8s-apply k8s-delete clean
 
@@ -21,6 +23,16 @@ docker-push:
 		echo "Set REGISTRY to push (e.g. REGISTRY=ghcr.io/you)"; exit 1; \
 	fi
 	docker push $(IMAGE)
+
+
+# Build multi-arch image using docker buildx and push to registry.
+# Requires that you've logged in to your registry (docker login) or set appropriate creds.
+# Usage: make docker-buildx REGISTRY=ghcr.io/you IMAGE_TAG=1.2.3
+docker-buildx: build
+	@echo "Using buildx builder '$(BUILDER_NAME)' (creating if missing)"
+	@docker buildx inspect $(BUILDER_NAME) >/dev/null 2>&1 || docker buildx create --name $(BUILDER_NAME) --use
+	@echo "Building for: $(PLATFORMS) -> $(IMAGE)"
+	@docker buildx build --platform $(PLATFORMS) -t $(IMAGE) -f $(DOCKERFILE) --push .
 
 # Apply the DaemonSet to the cluster; this replaces the image placeholder with $(IMAGE)
 
