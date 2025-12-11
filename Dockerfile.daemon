@@ -5,6 +5,7 @@ WORKDIR /usr/src/kflow
 # Cache cargo registry/build dependencies where possible
 COPY Cargo.toml Cargo.lock ./
 COPY src ./src
+COPY k8s/daemonset.yaml k8s/daemonset.yaml
 
 # Install build deps for crates that need system libs (adjust if not needed)
 RUN apt-get update \

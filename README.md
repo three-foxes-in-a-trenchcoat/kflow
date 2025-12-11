@@ -75,6 +75,19 @@ Examples:
 
 	Edit `k8s/daemonset.yaml` so the volumeMount and `CONNTRACK_PATH` agree, or pass the exact path the daemon can see inside the container with `--conntrack`.
 
+### Auto-detect mode
+
+The daemon can attempt to auto-detect the correct conntrack file path if you don't want to pick an exact path. 
+
+**This is enabled by default.**
+
+
+Use the installer to embed a custom path into the manifest (the installer will translate `/proc/...` to `/host/proc/...` when needed):
+
+	`kflow install --conntrack <whatever> -n monitoring`
+
+If auto-detection fails the daemon will log a message and fall back to the configured path; using `KFLOW_DEBUG` will emit helpful debug messages about which candidate paths were tested.
+
 Quick debugging checklist if pods show no connections:
 
 1. On the node, check that conntrack is present and readable: `sudo head -n 20 /proc/net/nf_conntrack` (or your distro's path).
