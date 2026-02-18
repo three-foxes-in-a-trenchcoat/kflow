@@ -19,7 +19,6 @@ get_sha256() {
 }
 
 SHA_LINUX_AMD64=$(get_sha256 "kflow-linux-amd64")
-SHA_LINUX_ARM64=$(get_sha256 "kflow-linux-arm64")
 SHA_DARWIN_AMD64=$(get_sha256 "kflow-darwin-amd64")
 SHA_DARWIN_ARM64=$(get_sha256 "kflow-darwin-arm64")
 
@@ -62,13 +61,6 @@ spec:
         matchLabels:
           os: linux
           arch: amd64
-    - bin: kflow
-      uri: ${BASE_URL}/kflow-linux-arm64.tar.gz
-      sha256: "${SHA_LINUX_ARM64}"
-      selector:
-        matchLabels:
-          os: linux
-          arch: arm64
     - bin: kflow
       uri: ${BASE_URL}/kflow-darwin-amd64.tar.gz
       sha256: "${SHA_DARWIN_AMD64}"
